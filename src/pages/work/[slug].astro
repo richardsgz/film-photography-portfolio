@@ -1,0 +1,115 @@
+---
+import { series } from '../../data/series';
+
+export function getStaticPaths() {
+	return series.map((project) => ({
+		params: { slug: project.slug },
+		props: { project },
+	}));
+}
+
+const { project } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="description" content={`${project.title} — ${project.description}`} />
+		<meta name="theme-color" content="#f2efe8" />
+		<link rel="icon" href="/film-photography-portfolio/favicon.svg" />
+		<title>{project.title} — Richards Gonzalez</title>
+	</head>
+	<body>
+		<header class="site-header">
+			<a class="wordmark" href="/film-photography-portfolio/" aria-label="Richards Gonzalez home">
+				<span>RG</span>
+				<span class="wordmark-caption">Film photography</span>
+			</a>
+			<a class="back-link" href="/film-photography-portfolio/#work"><span aria-hidden="true">←</span> Selected work</a>
+		</header>
+
+		<main>
+			<section class="series-intro" aria-labelledby="series-title">
+				<div class="series-label">
+					<p class="eyebrow">{project.number} / Series</p>
+					<p class="eyebrow">{project.meta}</p>
+				</div>
+				<div class="series-title-wrap">
+					<h1 id="series-title">{project.title}</h1>
+					<p class="series-description">{project.description}</p>
+				</div>
+				<div class="series-details">
+					<span>Photographs by Richards Gonzalez</span>
+					<span>{project.film}</span>
+				</div>
+			</section>
+
+			<section class="gallery" aria-label={`${project.title} photographs`}>
+				{project.images.map((item, index) => (
+					<figure class:list={['gallery-item', { 'gallery-item--wide': index === 0 || index === 4 }]}> 
+						<img src={item.image} alt={item.alt} loading={index === 0 ? 'eager' : 'lazy'} />
+						<figcaption><span>{String(index + 1).padStart(2, '0')}</span><span>{project.meta}</span></figcaption>
+					</figure>
+				))}
+			</section>
+
+			<nav class="series-nav" aria-label="Series navigation">
+				<a href="/film-photography-portfolio/">← Back home</a>
+				<a href="mailto:richards.gzan@gmail.com">Start a conversation <span aria-hidden="true">↗</span></a>
+			</nav>
+		</main>
+
+		<footer class="site-footer">
+			<span>© {new Date().getFullYear()} Richards Gonzalez</span>
+			<span>Made slowly / On film</span>
+		</footer>
+	</body>
+</html>
+
+<style>
+	@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&display=swap');
+
+	:global(*) { box-sizing: border-box; }
+	:global(html) { scroll-behavior: smooth; }
+	:global(body) { margin: 0; background: #f2efe8; color: #1e211c; font-family: 'DM Mono', monospace; font-size: 13px; line-height: 1.55; }
+	:global(a) { color: inherit; text-decoration: none; }
+	:global(::selection) { background: #d5e35e; color: #1e211c; }
+	.site-header, .site-footer { display: flex; align-items: flex-start; justify-content: space-between; padding: 28px 4.4vw; }
+	.site-header { border-bottom: 1px solid #c8c7be; }
+	.wordmark { display: flex; align-items: baseline; gap: 14px; font-weight: 500; letter-spacing: .04em; }
+	.wordmark-caption, .eyebrow, .series-details, figcaption { color: #64685d; font-size: 10px; letter-spacing: .09em; text-transform: uppercase; }
+	.back-link, .series-nav a { color: #9b4b32; transition: color .2s ease; }
+	.back-link:hover, .series-nav a:hover { color: #1e211c; }
+	main { overflow: hidden; }
+	.series-intro { display: grid; grid-template-columns: 20% 1fr 20%; gap: 4vw; padding: 100px 4.4vw 90px; }
+	.eyebrow { margin: 0; }
+	.series-label { display: flex; flex-direction: column; gap: 10px; }
+	h1 { max-width: 900px; margin: 0; font-family: 'Newsreader', serif; font-size: clamp(4.5rem, 10vw, 10rem); font-weight: 300; letter-spacing: -.05em; line-height: .82; }
+	.series-description { max-width: 310px; margin: 46px 0 0; color: #64685d; }
+	.series-details { display: flex; flex-direction: column; align-self: end; gap: 8px; line-height: 1.7; text-align: right; }
+	.gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 8vw 4vw; padding: 0 10vw 130px; }
+	.gallery-item { margin: 0; }
+	.gallery-item--wide { grid-column: 1 / -1; width: 72%; margin: 0 auto; }
+	.gallery-item img { display: block; width: 100%; aspect-ratio: .8; object-fit: cover; background: #ddd9ce; filter: saturate(.78) contrast(.96); transition: filter .5s ease, transform .5s ease; }
+	.gallery-item--wide img { aspect-ratio: 1.45; }
+	.gallery-item:hover img { filter: saturate(1) contrast(1); transform: scale(1.012); }
+	figcaption { display: flex; justify-content: space-between; padding-top: 12px; }
+	.series-nav { display: flex; justify-content: space-between; border-top: 1px solid #c8c7be; margin: 0 4.4vw; padding: 26px 0 100px; }
+	.site-footer { border-top: 1px solid #c8c7be; color: #64685d; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
+	@media (max-width: 700px) {
+		.site-header, .site-footer { padding: 22px 6vw; }
+		.back-link { font-size: 10px; }
+		.series-intro { display: block; padding: 72px 6vw 68px; }
+		.series-title-wrap { margin-top: 35px; }
+		h1 { font-size: clamp(4rem, 18vw, 6.5rem); }
+		.series-description { margin-top: 34px; }
+		.series-details { align-items: flex-start; margin-top: 45px; text-align: left; }
+		.gallery { display: block; padding: 0 6vw 80px; }
+		.gallery-item, .gallery-item--wide { width: 100%; margin: 0 0 58px; }
+		.gallery-item img, .gallery-item--wide img { aspect-ratio: .82; }
+		.gallery-item--wide img { aspect-ratio: 1.1; }
+		.series-nav { margin: 0 6vw; padding-bottom: 70px; gap: 20px; }
+	}
+	@media (prefers-reduced-motion: reduce) { :global(html) { scroll-behavior: auto; } .gallery-item img { transition: none; } }
+</style>
