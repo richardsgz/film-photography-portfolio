@@ -1,19 +1,5 @@
 # Film Photography Portfolio
 
-```sh
-npm create astro@latest -- --template minimal
-```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
 Personal film photography portfolio built with Astro and deployed to GitHub Pages.
 
 Live site: <https://richardsgz.github.io/film-photography-portfolio/>
@@ -42,6 +28,25 @@ The GitHub Actions workflow in `.github/workflows/deploy.yml` publishes successf
 
 ## Project structure
 
-- `src/pages/` contains page routes.
-- `src/components/` contains reusable interface components.
-- `public/` contains static assets such as photographs and icons.
+```text
+/
+├── public/
+│   ├── favicon.svg
+│   └── images/
+├── src/
+│   ├── data/
+│   │   └── series.ts
+│   └── pages/
+│       ├── index.astro
+│       └── work/
+│           └── [slug].astro
+├── astro.config.mjs
+├── package.json
+└── .github/workflows/deploy.yml
+```
+
+Series images currently live under `public/images/`. Local image dimensions are read during the build so gallery layouts can preserve each photograph's aspect ratio.
+
+## Adding a series
+
+Add the images to a new folder under `public/images/`, then add the series metadata and image entries in `src/data/series.ts`. The matching page is generated automatically at `/work/<slug>/`.

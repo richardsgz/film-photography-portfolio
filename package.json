@@ -12,12 +12,10 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^7.3.5"
+    "astro": "^7.3.5",
+    "image-size": "^2.0.4"
   },
   "allowScripts": {
     "esbuild": true
-  },
-  "devDependencies": {
-    "image-size": "^2.0.4"
   }
 }
