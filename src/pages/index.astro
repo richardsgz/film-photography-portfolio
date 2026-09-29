@@ -1,33 +1,17 @@
 ---
-const projects = [
-	{
-		number: '01',
-		title: 'Siete dias de sol',
-		meta: 'Spain · 2026',
-		slug: 'siete-dias-de-sol',
-		image: '/film-photography-portfolio/images/siete-dias-de-sol/cover.JPG',
-		alt: 'A photograph from the Siete dias de sol series',
-		className: 'project-image project-image--wide',
-	},
-	{
-		number: '02',
-		title: 'The long afternoon',
-		meta: 'Lisbon · 2023',
-		slug: 'the-long-afternoon',
-		image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=85',
-		alt: 'Mountain landscape under a deep blue evening sky',
-		className: 'project-image project-image--portrait',
-	},
-	{
-		number: '03',
-		title: 'Quiet distances',
-		meta: 'Scotland · 2022',
-		slug: 'quiet-distances',
-		image: 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1200&q=85',
-		alt: 'Sunlight passing through a quiet forest',
-		className: 'project-image project-image--portrait',
-	},
-];
+import { getJustifiedRows, series } from '../data/series';
+
+const projects = series.map((project) => ({
+	...project,
+	image: project.cover.image,
+	alt: project.cover.alt,
+	width: project.cover.width,
+	height: project.cover.height,
+	aspectRatio: project.cover.aspectRatio,
+	orientation: project.cover.orientation,
+}));
+
+const projectRows = getJustifiedRows(projects);
 ---
 
 <html lang="en">
@@ -87,18 +71,22 @@ const projects = [
 					<p class="section-aside">Three ongoing series<br />from the archive</p>
 				</div>
 				<div class="project-grid">
-					{projects.map((project) => (
-						<a class="project" href={`/film-photography-portfolio/work/${project.slug}/`}>
-							<div class="project-frame">
-								<img class={project.className} src={project.image} alt={project.alt} loading="lazy" />
-								<span class="project-arrow" aria-hidden="true">↗</span>
-							</div>
-							<div class="project-caption">
-								<span>{project.number}</span>
-								<span>{project.title}</span>
-								<span>{project.meta}</span>
-							</div>
-						</a>
+					{projectRows.map((row) => (
+						<div class="project-row" style={`--row-template: ${row.columns};`}>
+							{row.items.map((project) => (
+								<a class="project" href={`/film-photography-portfolio/work/${project.slug}/`}>
+									<div class="project-frame">
+										<img class="project-image" src={project.image} alt={project.alt} width={project.width} height={project.height} data-orientation={project.orientation} loading="lazy" />
+										<span class="project-arrow" aria-hidden="true">↗</span>
+									</div>
+									<div class="project-caption">
+										<span>{project.number}</span>
+										<span>{project.title}</span>
+										<span>{project.meta}</span>
+									</div>
+								</a>
+							))}
+						</div>
 					))}
 				</div>
 			</section>
@@ -164,13 +152,10 @@ const projects = [
 	.section-heading { display: grid; grid-template-columns: 20% 1fr 20%; align-items: end; margin-bottom: 70px; }
 	.section-heading h2 { grid-column: 2; }
 	.section-aside { grid-column: 3; margin: 0 0 8px; text-align: right; line-height: 1.7; }
-	.project-grid { display: grid; grid-template-columns: 1.17fr .83fr; gap: 10vw 4vw; align-items: start; }
-	.project:nth-child(2) { margin-top: 12vw; }
-	.project:nth-child(3) { grid-column: 1 / -1; width: 57%; margin-left: 19%; }
+	.project-grid { display: flex; flex-direction: column; gap: 7vw; }
+	.project-row { display: grid; grid-template-columns: var(--row-template); gap: 2.4vw; align-items: start; }
 	.project-frame { position: relative; overflow: hidden; background: #ddd9ce; }
-	.project-image { display: block; width: 100%; object-fit: cover; filter: saturate(.73) contrast(.95); transition: transform .6s cubic-bezier(.2,.7,.2,1), filter .6s ease; }
-	.project-image--wide { aspect-ratio: 1.32; }
-	.project-image--portrait { aspect-ratio: .78; }
+	.project-image { display: block; width: 100%; height: auto; filter: saturate(.73) contrast(.95); transition: transform .6s cubic-bezier(.2,.7,.2,1), filter .6s ease; }
 	.project:hover .project-image { transform: scale(1.035); filter: saturate(1) contrast(1); }
 	.project-arrow { position: absolute; right: 16px; bottom: 14px; display: grid; width: 37px; height: 37px; place-items: center; border: 1px solid rgba(242,239,232,.8); border-radius: 50%; color: #f2efe8; opacity: 0; transform: translate(-7px, 7px); transition: opacity .35s ease, transform .35s ease; }
 	.project:hover .project-arrow { opacity: 1; transform: translate(0); }
@@ -204,9 +189,8 @@ const projects = [
 		.section-heading h2 { margin: 35px 0 26px; }
 		.section-aside { text-align: left; }
 		.project-grid { display: block; }
-		.project, .project:nth-child(2), .project:nth-child(3) { display: block; width: 88%; margin: 0 0 56px auto; }
-		.project:nth-child(2) { width: 73%; }
-		.project:nth-child(3) { width: 88%; margin-left: 0; }
+		.project-row { display: block; }
+		.project { display: block; width: 88%; margin: 0 0 56px auto; }
 		.project-caption { grid-template-columns: 13% 1fr; }
 		.project-caption span:last-child { grid-column: 2; }
 		.site-footer { flex-wrap: wrap; gap: 10px 20px; }

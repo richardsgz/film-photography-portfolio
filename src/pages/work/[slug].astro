@@ -1,5 +1,5 @@
 ---
-import { series } from '../../data/series';
+import { getJustifiedRows, series } from '../../data/series';
 
 export function getStaticPaths() {
 	return series.map((project) => ({
@@ -9,6 +9,8 @@ export function getStaticPaths() {
 }
 
 const { project } = Astro.props;
+
+const galleryRows = getJustifiedRows(project.images);
 ---
 
 <html lang="en">
@@ -46,11 +48,15 @@ const { project } = Astro.props;
 			</section>
 
 			<section class="gallery" aria-label={`${project.title} photographs`}>
-				{project.images.map((item, index) => (
-					<figure class:list={['gallery-item', { 'gallery-item--wide': index === 0 || index === 4 }]}> 
-						<img src={item.image} alt={item.alt} loading={index === 0 ? 'eager' : 'lazy'} />
-						<figcaption><span>{String(index + 1).padStart(2, '0')}</span><span>{project.meta}</span></figcaption>
-					</figure>
+				{galleryRows.map((row) => (
+					<div class="gallery-row" style={`--row-template: ${row.columns};`}>
+						{row.items.map((item, index) => (
+							<figure class="gallery-item">
+								<img src={item.image} alt={item.alt} width={item.width} height={item.height} data-orientation={item.orientation} loading={index === 0 ? 'eager' : 'lazy'} />
+								<figcaption><span>{String(row.startIndex + index + 1).padStart(2, '0')}</span><span>{project.meta}</span></figcaption>
+							</figure>
+						))}
+					</div>
 				))}
 			</section>
 
@@ -88,11 +94,10 @@ const { project } = Astro.props;
 	h1 { max-width: 900px; margin: 0; font-family: 'Newsreader', serif; font-size: clamp(4.5rem, 10vw, 10rem); font-weight: 300; letter-spacing: -.05em; line-height: .82; }
 	.series-description { max-width: 310px; margin: 46px 0 0; color: #64685d; }
 	.series-details { display: flex; flex-direction: column; align-self: end; gap: 8px; line-height: 1.7; text-align: right; }
-	.gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 8vw 4vw; padding: 0 10vw 130px; }
-	.gallery-item { margin: 0; }
-	.gallery-item--wide { grid-column: 1 / -1; width: 72%; margin: 0 auto; }
-	.gallery-item img { display: block; width: 100%; aspect-ratio: .8; object-fit: cover; background: #ddd9ce; filter: saturate(.78) contrast(.96); transition: filter .5s ease, transform .5s ease; }
-	.gallery-item--wide img { aspect-ratio: 1.45; }
+	.gallery { display: flex; flex-direction: column; gap: 7vw; padding: 0 7vw 130px; }
+	.gallery-row { display: grid; grid-template-columns: var(--row-template); gap: 2.4vw; align-items: start; }
+	.gallery-item { min-width: 0; margin: 0; }
+	.gallery-item img { display: block; width: 100%; height: auto; background: #ddd9ce; filter: saturate(.78) contrast(.96); transition: filter .5s ease, transform .5s ease; }
 	.gallery-item:hover img { filter: saturate(1) contrast(1); transform: scale(1.012); }
 	figcaption { display: flex; justify-content: space-between; padding-top: 12px; }
 	.series-nav { display: flex; justify-content: space-between; border-top: 1px solid #c8c7be; margin: 0 4.4vw; padding: 26px 0 100px; }
@@ -106,9 +111,8 @@ const { project } = Astro.props;
 		.series-description { margin-top: 34px; }
 		.series-details { align-items: flex-start; margin-top: 45px; text-align: left; }
 		.gallery { display: block; padding: 0 6vw 80px; }
-		.gallery-item, .gallery-item--wide { width: 100%; margin: 0 0 58px; }
-		.gallery-item img, .gallery-item--wide img { aspect-ratio: .82; }
-		.gallery-item--wide img { aspect-ratio: 1.1; }
+		.gallery-row { display: block; }
+		.gallery-item { width: 100%; margin: 0 0 58px; }
 		.series-nav { margin: 0 6vw; padding-bottom: 70px; gap: 20px; }
 	}
 	@media (prefers-reduced-motion: reduce) { :global(html) { scroll-behavior: auto; } .gallery-item img { transition: none; } }
