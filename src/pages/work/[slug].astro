@@ -1,4 +1,5 @@
 ---
+import ThemeToggle from '../../components/ThemeToggle.astro';
 import { getJustifiedRows, series } from '../../data/series';
 
 export function getStaticPaths() {
@@ -20,6 +21,14 @@ const galleryRows = getJustifiedRows(project.images);
 		<meta name="description" content={`${project.title} — ${project.description}`} />
 		<meta name="theme-color" content="#f2efe8" />
 		<link rel="icon" href="/film-photography-portfolio/favicon.svg" />
+		<script is:inline>
+			let savedTheme;
+			try { savedTheme = localStorage.getItem('portfolio-theme'); } catch {}
+			const preferredTheme = savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+			document.documentElement.dataset.theme = preferredTheme;
+			document.documentElement.style.colorScheme = preferredTheme;
+			document.querySelector('meta[name="theme-color"]')?.setAttribute('content', preferredTheme === 'dark' ? '#1d211d' : '#f2efe8');
+		</script>
 		<title>{project.title} — Richards Gonzalez</title>
 	</head>
 	<body>
@@ -28,7 +37,10 @@ const galleryRows = getJustifiedRows(project.images);
 				<span>RG</span>
 				<span class="wordmark-caption">Film photography</span>
 			</a>
-			<a class="back-link" href="/film-photography-portfolio/#work"><span aria-hidden="true">←</span> Selected work</a>
+			<div class="header-actions">
+				<a class="back-link" href="/film-photography-portfolio/#work"><span aria-hidden="true">←</span> Selected work</a>
+				<ThemeToggle />
+			</div>
 		</header>
 
 		<main>
@@ -78,32 +90,34 @@ const galleryRows = getJustifiedRows(project.images);
 
 	:global(*) { box-sizing: border-box; }
 	:global(html) { scroll-behavior: smooth; }
-	:global(body) { margin: 0; background: #f2efe8; color: #1e211c; font-family: 'DM Mono', monospace; font-size: 13px; line-height: 1.55; }
+	:global(body) { margin: 0; background: var(--paper); color: var(--ink); font-family: 'DM Mono', monospace; font-size: 13px; line-height: 1.55; transition: background-color .3s ease, color .3s ease; }
 	:global(a) { color: inherit; text-decoration: none; }
-	:global(::selection) { background: #d5e35e; color: #1e211c; }
+	:global(::selection) { background: var(--highlight); color: var(--ink); }
 	.site-header, .site-footer { display: flex; align-items: flex-start; justify-content: space-between; padding: 28px 4.4vw; }
 	.site-header { border-bottom: 1px solid #c8c7be; }
 	.wordmark { display: flex; align-items: baseline; gap: 14px; font-weight: 500; letter-spacing: .04em; }
-	.wordmark-caption, .eyebrow, .series-details, figcaption { color: #64685d; font-size: 10px; letter-spacing: .09em; text-transform: uppercase; }
-	.back-link, .series-nav a { color: #9b4b32; transition: color .2s ease; }
-	.back-link:hover, .series-nav a:hover { color: #1e211c; }
+	.wordmark-caption, .eyebrow, .series-details, figcaption { color: var(--muted); font-size: 10px; letter-spacing: .09em; text-transform: uppercase; }
+	.header-actions { display: flex; align-items: center; gap: 28px; }
+	.back-link, .series-nav a { color: var(--accent); transition: color .2s ease; }
+	.back-link:hover, .series-nav a:hover { color: var(--ink); }
 	main { overflow: hidden; }
 	.series-intro { display: grid; grid-template-columns: 20% 1fr 20%; gap: 4vw; padding: 100px 4.4vw 90px; }
 	.eyebrow { margin: 0; }
 	.series-label { display: flex; flex-direction: column; gap: 10px; }
 	h1 { max-width: 900px; margin: 0; font-family: 'Newsreader', serif; font-size: clamp(4.5rem, 10vw, 10rem); font-weight: 300; letter-spacing: -.05em; line-height: .82; }
-	.series-description { max-width: 310px; margin: 46px 0 0; color: #64685d; }
+	.series-description { max-width: 310px; margin: 46px 0 0; color: var(--muted); }
 	.series-details { display: flex; flex-direction: column; align-self: end; gap: 8px; line-height: 1.7; text-align: right; }
 	.gallery { display: flex; flex-direction: column; gap: 7vw; padding: 0 7vw 130px; }
 	.gallery-row { display: grid; grid-template-columns: var(--row-template); gap: 2.4vw; align-items: start; }
 	.gallery-item { min-width: 0; margin: 0; }
-	.gallery-item img { display: block; width: 100%; height: auto; background: #ddd9ce; filter: saturate(.78) contrast(.96); transition: filter .5s ease, transform .5s ease; }
+	.gallery-item img { display: block; width: 100%; height: auto; background: var(--frame); filter: saturate(.78) contrast(.96); transition: filter .5s ease, transform .5s ease; }
 	.gallery-item:hover img { filter: saturate(1) contrast(1); transform: scale(1.012); }
 	figcaption { display: flex; justify-content: space-between; padding-top: 12px; }
-	.series-nav { display: flex; justify-content: space-between; border-top: 1px solid #c8c7be; margin: 0 4.4vw; padding: 26px 0 100px; }
-	.site-footer { border-top: 1px solid #c8c7be; color: #64685d; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
+	.series-nav { display: flex; justify-content: space-between; border-top: 1px solid var(--line); margin: 0 4.4vw; padding: 26px 0 100px; }
+	.site-footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
 	@media (max-width: 700px) {
 		.site-header, .site-footer { padding: 22px 6vw; }
+		.header-actions { gap: 14px; }
 		.back-link { font-size: 10px; }
 		.series-intro { display: block; padding: 72px 6vw 68px; }
 		.series-title-wrap { margin-top: 35px; }
