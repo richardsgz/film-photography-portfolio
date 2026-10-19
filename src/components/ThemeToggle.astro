@@ -4,6 +4,8 @@
 </button>
 
 <script>
+	type Theme = 'light' | 'dark';
+
 	const themeStorageKey = 'portfolio-theme';
 	const themeMedia = window.matchMedia('(prefers-color-scheme: dark)');
 	const toggle = document.querySelector('[data-theme-toggle]');
@@ -21,7 +23,7 @@
 		}
 	}
 
-	function setTheme(theme, persist = false) {
+	function setTheme(theme: Theme, persist = false) {
 		document.documentElement.dataset.theme = theme;
 		document.documentElement.style.colorScheme = theme;
 		document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#1d211d' : '#f2efe8');

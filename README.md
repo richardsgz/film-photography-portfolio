@@ -17,14 +17,15 @@ Open <http://localhost:4321/film-photography-portfolio/> while the development s
 
 ## Production checks
 
-Build and preview the production output locally:
+Run Astro and TypeScript diagnostics, then build and preview the production output:
 
 ```sh
+npm run check
 npm run build
 npm run preview
 ```
 
-The GitHub Actions workflow in `.github/workflows/deploy.yml` publishes successful pushes to `main` through GitHub Pages.
+The GitHub Actions workflow runs the check and build on pull requests to `main`. Successful pushes to `main` are deployed through GitHub Pages.
 
 ## Project structure
 
@@ -34,6 +35,8 @@ The GitHub Actions workflow in `.github/workflows/deploy.yml` publishes successf
 │   ├── favicon.svg
 │   └── images/
 ├── src/
+│   ├── components/
+│   │   └── ThemeToggle.astro
 │   ├── data/
 │   │   └── series.ts
 │   └── pages/
@@ -42,6 +45,7 @@ The GitHub Actions workflow in `.github/workflows/deploy.yml` publishes successf
 │           └── [slug].astro
 ├── astro.config.mjs
 ├── package.json
+├── tsconfig.json
 └── .github/workflows/deploy.yml
 ```
 
